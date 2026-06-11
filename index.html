@@ -1,363 +1,58 @@
 <!doctype html>
 <html lang="th">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Saleng Go — NSC 2026 prototype</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="theme-color" content="#0d3b2e" />
+  <meta name="description" content="ซาเลงโก — บริการรับขยะอัจฉริยะ · Smart waste collection, Bangkok" />
+  <title>Saleng Go · ซาเลงโก</title>
 
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+Thai:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<link href="https://api.mapbox.com/mapbox-gl-js/v3.6.0/mapbox-gl.css" rel="stylesheet">
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+Thai:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
 
-<style>
-  html, body { margin: 0; padding: 0; background: #ece8df; font-family: "Inter", "Noto Sans Thai", system-ui, sans-serif; color: #0a1f15; -webkit-font-smoothing: antialiased; }
-  * { box-sizing: border-box; }
-  .stage {
-    min-height: 100vh; width: 100%;
-    background:
-      radial-gradient(1200px 600px at 20% 10%, rgba(31,181,94,0.08), transparent 60%),
-      radial-gradient(1000px 500px at 90% 90%, rgba(13,59,46,0.06), transparent 60%),
-      #ece8df;
-    padding: 32px 24px 64px; position: relative; overflow-x: hidden;
-  }
-  .topbar { display: flex; align-items: center; justify-content: space-between; margin: 0 auto 28px; max-width: 1320px; }
-  .topbar .brand { display: flex; align-items: center; gap: 12px; }
-  .topbar .brand .mark {
-    width: 38px; height: 38px; border-radius: 12px;
-    background: linear-gradient(135deg, #0d3b2e, #1fb55e);
-    display: flex; align-items: center; justify-content: center;
-    color: #d4f87a; font-weight: 800; font-size: 18px; letter-spacing: -0.5px;
-    box-shadow: 0 4px 14px rgba(13,59,46,0.18);
-  }
-  .topbar .brand .wm { font-family: "Inter"; font-weight: 800; font-size: 20px; letter-spacing: -0.5px; color: #0d3b2e; }
-  .topbar .brand .wm em { font-style: normal; color: #1fb55e; }
-  .topbar .brand .sub { font-family: "Noto Sans Thai"; font-size: 12px; color: #4a6358; font-weight: 500; margin-top: -2px; }
-  .meta { display: flex; align-items: center; gap: 16px; font-family: "Inter"; font-size: 11px; color: #4a6358; letter-spacing: 0.6px; text-transform: uppercase; font-weight: 600; }
-  .meta .pill { padding: 6px 12px; border-radius: 99px; background: #fff; border: 1px solid #e5e0d2; }
+  <!-- Mapbox GL CSS -->
+  <link href="https://api.mapbox.com/mapbox-gl-js/v3.6.0/mapbox-gl.css" rel="stylesheet">
 
-  .phone-wrap { display: flex; align-items: flex-start; justify-content: center; gap: 48px; flex-wrap: wrap; }
-  .phone-pad { position: relative; }
-  .phone-shadow { position: absolute; left: 50%; transform: translateX(-50%); bottom: -24px; width: 380px; height: 40px; border-radius: 50%; background: rgba(13,59,46,0.18); filter: blur(24px); z-index: 0; }
-
-  .rail { width: 320px; padding: 22px; background: #fff; border-radius: 22px; border: 1px solid #e5e0d2; box-shadow: 0 12px 40px rgba(13,59,46,0.06); position: sticky; top: 32px; }
-  .rail h3 { margin: 0 0 12px; font-family: "Inter"; font-size: 11px; font-weight: 700; color: #4a6358; letter-spacing: 1.2px; text-transform: uppercase; }
-  .rail .seg { display: flex; background: #fafaf6; padding: 4px; border-radius: 12px; margin-bottom: 16px; }
-  .rail .seg button { flex: 1; border: none; background: transparent; padding: 10px 0; font-family: "Inter"; font-size: 13px; font-weight: 600; color: #4a6358; cursor: pointer; border-radius: 8px; }
-  .rail .seg button.active { background: #fff; color: #0a1f15; box-shadow: 0 1px 2px rgba(10,31,21,0.1); }
-  .rail .group { margin-bottom: 18px; }
-  .rail .group-label { font-family: "Inter"; font-size: 10px; font-weight: 700; color: #8a9b91; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 6px; }
-  .rail .item { display: flex; align-items: center; gap: 10px; padding: 9px 10px; border-radius: 10px; cursor: pointer; color: #0a1f15; font-family: "Inter"; font-size: 13px; font-weight: 500; transition: background .15s; }
-  .rail .item:hover { background: #fafaf6; }
-  .rail .item.active { background: #e8f5ec; color: #0d3b2e; font-weight: 700; }
-  .rail .item .num { width: 22px; height: 22px; border-radius: 6px; background: #fafaf6; display: flex; align-items: center; justify-content: center; font-size: 10px; color: #4a6358; font-weight: 700; font-variant-numeric: tabular-nums; }
-  .rail .item.active .num { background: #0d3b2e; color: #d4f87a; }
-  .rail .footer { margin-top: 16px; padding-top: 16px; border-top: 1px solid #f0ece1; font-family: "Inter"; font-size: 11px; color: #8a9b91; line-height: 1.5; }
-  .rail .footer kbd { background: #fafaf6; border: 1px solid #e5e0d2; border-radius: 4px; padding: 1px 5px; font-family: "Inter"; font-size: 10px; color: #4a6358; }
-
-  .map-loading { position: absolute; inset: 0; background: linear-gradient(135deg, #d8e8df, #c5dccc); display: flex; align-items: center; justify-content: center; z-index: 1; transition: opacity .3s; }
-  .map-loading .ring { width: 32px; height: 32px; border: 3px solid rgba(13,59,46,0.15); border-top-color: #0d3b2e; border-radius: 99px; animation: sg-spin 1s linear infinite; }
-  @keyframes sg-spin { to { transform: rotate(360deg); } }
-
-  /* ── User location marker ── */
-  .sg-marker { cursor: pointer; }
-  .sg-marker-user {
-    width: 22px; height: 22px; border-radius: 99px;
-    background: #2563eb; border: 3px solid #fff;
-    box-shadow: 0 0 0 4px rgba(37,99,235,0.25), 0 4px 12px rgba(37,99,235,0.4);
-    position: relative;
-  }
-  .sg-marker-user::before {
-    content: ''; position: absolute; inset: -10px; border-radius: 99px;
-    background: rgba(37,99,235,0.3); animation: sg-pulse 2s ease-out infinite;
-  }
-  @keyframes sg-pulse { 0% { transform: scale(0.6); opacity: 0.8; } 100% { transform: scale(1.8); opacity: 0; } }
-
-  /* ── Driver marker ── */
-  .sg-marker-driver {
-    width: 44px; height: 44px; border-radius: 14px;
-    background: #fff; border: 2px solid #0d3b2e;
-    box-shadow: 0 6px 20px rgba(13,59,46,0.25);
-    display: flex; align-items: center; justify-content: center;
-    transform-origin: center;
-  }
-  .sg-marker-driver svg { stroke: #0d3b2e; }
-
-  /* ── Stop marker ── */
-  .sg-marker-stop {
-    width: 30px; height: 30px; border-radius: 50% 50% 50% 4px;
-    transform: rotate(-45deg); background: #0d3b2e; border: 2px solid #fff;
-    box-shadow: 0 4px 12px rgba(13,59,46,0.3);
-    display: flex; align-items: center; justify-content: center;
-  }
-  .sg-marker-stop > span { transform: rotate(45deg); color: #d4f87a; font-weight: 800; font-size: 12px; font-family: 'Inter'; }
-
-  /* ── Destination marker ── */
-  .sg-marker-dest {
-    width: 32px; height: 32px; border-radius: 8px;
-    background: linear-gradient(135deg,#0d3b2e,#1fb55e);
-    border: 2px solid #fff; box-shadow: 0 4px 12px rgba(13,59,46,0.3);
-    display: flex; align-items: center; justify-content: center;
-  }
-  .sg-dest-ring {
-    width: 14px; height: 14px; border-radius: 99px;
-    border: 2.5px solid #fff;
-    display: flex; align-items: center; justify-content: center;
-  }
-  .sg-dest-dot {
-    width: 5px; height: 5px; border-radius: 99px;
-    background: #fff;
-  }
-
-  /* ── Radar animation (matching screen) ── */
-  .sg-radar-wrap {
-    position: relative; width: 200px; height: 200px;
-    display: flex; align-items: center; justify-content: center;
-  }
-  .sg-radar-ring {
-    position: absolute; border-radius: 99px;
-    border: 1.5px solid rgba(31,181,94,0.5);
-    animation: sg-radar 2.4s ease-out infinite;
-  }
-  .sg-radar-ring-1 { width: 80px; height: 80px; animation-delay: 0s; }
-  .sg-radar-ring-2 { width: 140px; height: 140px; animation-delay: 0.6s; }
-  .sg-radar-ring-3 { width: 200px; height: 200px; animation-delay: 1.2s; }
-  @keyframes sg-radar {
-    0%   { transform: scale(0.4); opacity: 0.8; }
-    100% { transform: scale(1);   opacity: 0; }
-  }
-
-  /* ── Skeleton loading (matching screen) ── */
-  @keyframes sg-shimmer {
-    0%   { background-position: -400px 0; }
-    100% { background-position:  400px 0; }
-  }
-  .sg-skeleton-circle {
-    width: 40px; height: 40px; border-radius: 99px; flex-shrink: 0;
-    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
-    background-size: 800px 100%;
-    animation: sg-shimmer 1.4s infinite linear;
-  }
-  .sg-skeleton-line {
-    height: 12px; border-radius: 6px;
-    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
-    background-size: 800px 100%;
-    animation: sg-shimmer 1.4s infinite linear;
-  }
-
-  .mapboxgl-ctrl-bottom-right, .mapboxgl-ctrl-bottom-left { display: none !important; }
-  ::-webkit-scrollbar { width: 0; height: 0; }
-</style>
+  <!-- App styles -->
+  <link rel="stylesheet" href="css/app.css">
 </head>
 <body>
 
-<div class="stage">
-  <div class="topbar">
-    <div class="brand">
-      <div class="mark">S</div>
-      <div>
-        <div class="wm">saleng<em>·</em>go</div>
-        <div class="sub">ซาเลงโก · NSC 2026</div>
-      </div>
-    </div>
-    <div class="meta">
-      <span class="pill">PROTOTYPE</span>
-      <span class="pill">BANGKOK</span>
-      <span class="pill" id="map-mode-pill">MAPBOX 3D</span>
-    </div>
-  </div>
+<div id="app-root"></div>
 
-  <div class="phone-wrap">
-    <div class="phone-pad" id="phone-mount"></div>
-    <div id="rail-mount"></div>
-  </div>
-</div>
+<!-- React + Babel (standalone — no build step needed) -->
+<script src="https://unpkg.com/react@18.3.1/umd/react.production.min.js" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.production.min.js" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" crossorigin="anonymous"></script>
 
-<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
-<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
-<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<!-- API config — MUST load before map.jsx (gitignored; injected by GitHub Actions in CI) -->
+<script src="js/config.js"></script>
 
-<script type="text/babel" src="design.jsx"></script>
-<script type="text/babel" src="icons.jsx"></script>
-<script type="text/babel" src="map.jsx"></script>
-<script type="text/babel" src="ios-frame.jsx"></script>
-<script type="text/babel" src="tweaks-panel.jsx"></script>
-<script type="text/babel" src="resident.jsx"></script>
-<script type="text/babel" src="driver.jsx"></script>
+<!-- Core design system & utilities -->
+<script type="text/babel" src="js/design.jsx"></script>
+<script type="text/babel" src="js/icons.jsx"></script>
 
-<script type="text/babel">
-const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
-  "mode": "resident",
-  "lang": "en",
-  "mapStyle": "mapbox",
-  "demoState": "idle"
-}/*EDITMODE-END*/;
+<!-- Map (reads window.APP_CONFIG.mapboxToken) -->
+<script type="text/babel" src="js/map.jsx"></script>
 
-const DEMO_TO_ROUTE = {
-  resident: { idle: 'home', matching: 'matching', 'en-route': 'tracking', arrived: 'arrived' },
-  driver:   { idle: 'home', matching: 'request',  'en-route': 'route',    arrived: 'pickup' },
-};
+<!-- iOS frame components (used internally by screens) -->
+<script type="text/babel" src="js/ios-frame.jsx"></script>
 
-const RESIDENT_SCREENS = [
-  { k: 'home',     th: 'หน้าหลัก',           en: 'Home' },
-  { k: 'schedule', th: 'นัดหมายรับขยะ',      en: 'Schedule pickup' },
-  { k: 'matching', th: 'กำลังหาซาเล้ง',     en: 'Matching' },
-  { k: 'tracking', th: 'ติดตามแบบเรียลไทม์', en: 'Live tracking' },
-  { k: 'arrived',  th: 'ซาเล้งมาถึงแล้ว',   en: 'Arrived' },
-  { k: 'payment',  th: 'ชำระเงิน PromptPay', en: 'PromptPay payment' },
-  { k: 'review',   th: 'ให้คะแนน',           en: 'Rate & review' },
-  { k: 'history',  th: 'ประวัติงาน',         en: 'Trip history' },
-  { k: 'profile',  th: 'โปรไฟล์ · ผลกระทบ',  en: 'Profile · impact' },
-];
-const DRIVER_SCREENS = [
-  { k: 'home',     th: 'หน้าหลัก',          en: 'Home (online)' },
-  { k: 'request',  th: 'คำขอใหม่',          en: 'New request' },
-  { k: 'route',    th: 'เส้นทางที่เหมาะสุด', en: 'Optimized route' },
-  { k: 'stops',    th: 'รายการจุดรับ',      en: 'Stops list' },
-  { k: 'pickup',   th: 'ยืนยันการรับขยะ',   en: 'Pickup confirm' },
-  { k: 'earnings', th: 'รายได้',             en: 'Earnings' },
-  { k: 'profile',  th: 'โปรไฟล์ผู้ขับ',      en: 'Driver profile' },
-];
+<!-- Screen components -->
+<script type="text/babel" src="js/resident.jsx"></script>
+<script type="text/babel" src="js/driver.jsx"></script>
 
-function App() {
-  const [t, setT] = useTweaks(TWEAK_DEFAULTS);
-  const [route, setRoute] = React.useState(() =>
-    DEMO_TO_ROUTE[TWEAK_DEFAULTS.mode][TWEAK_DEFAULTS.demoState] || 'home'
-  );
+<!-- Auth + Settings screens -->
+<script type="text/babel" src="js/auth.jsx"></script>
+<script type="text/babel" src="js/settings.jsx"></script>
 
-  const lastSyncRef = React.useRef({ mode: t.mode, demoState: t.demoState });
-  React.useEffect(() => {
-    const last = lastSyncRef.current;
-    if (last.mode !== t.mode || last.demoState !== t.demoState) {
-      setRoute(DEMO_TO_ROUTE[t.mode][t.demoState] || 'home');
-      lastSyncRef.current = { mode: t.mode, demoState: t.demoState };
-    }
-  }, [t.mode, t.demoState]);
+<!-- Main app shell — mounts into #app-root -->
+<script type="text/babel" src="js/app.jsx"></script>
 
-  React.useEffect(() => {
-    const pill = document.getElementById('map-mode-pill');
-    if (pill) pill.textContent = t.mapStyle === 'mapbox' ? 'MAPBOX 3D' : 'STREETS';
-  }, [t.mapStyle]);
-
-  const go = React.useCallback((k) => setRoute(k), []);
-  const isResident = t.mode === 'resident';
-  const Screens = isResident ? {
-    home: ResidentHome, schedule: ResidentSchedule, matching: ResidentMatching,
-    tracking: ResidentTracking, arrived: ResidentArrived, payment: ResidentPayment,
-    review: ResidentReview, history: ResidentHistory, profile: ResidentProfile,
-  } : {
-    home: DriverHome, request: DriverRequest, route: DriverRoute, stops: DriverStops,
-    pickup: DriverPickup, earnings: DriverEarnings, profile: DriverProfile,
-  };
-  const Current = Screens[route] || Screens.home;
-
-  const phoneMount = document.getElementById('phone-mount');
-  const railMount  = document.getElementById('rail-mount');
-  React.useEffect(() => {
-    if (phoneMount && !phoneMount.querySelector('.phone-shadow')) {
-      const s = document.createElement('div');
-      s.className = 'phone-shadow';
-      phoneMount.appendChild(s);
-    }
-  }, []);
-
-  const phoneEl = (
-    <IOSDevice width={402} height={874}>
-      <div style={{ width: '100%', height: '100%', background: COLORS.cream, position: 'relative', overflow: 'hidden' }}>
-        <Current go={go} lang={t.lang} mapStyle={t.mapStyle} />
-      </div>
-    </IOSDevice>
-  );
-
-  const railEl = (
-    <div className="rail">
-      <h3>flow</h3>
-      <div className="seg">
-        <button className={isResident ? 'active' : ''} onClick={() => setT('mode', 'resident')}>
-          ผู้ใช้ · Resident
-        </button>
-        <button className={!isResident ? 'active' : ''} onClick={() => setT('mode', 'driver')}>
-          ซาเล้ง · Driver
-        </button>
-      </div>
-      <div className="group">
-        <div className="group-label">{isResident ? 'Resident screens' : 'Driver screens'}</div>
-        {(isResident ? RESIDENT_SCREENS : DRIVER_SCREENS).map((s, i) => (
-          <div key={s.k} className={'item ' + (route === s.k ? 'active' : '')} onClick={() => go(s.k)}>
-            <div className="num">{String(i + 1).padStart(2, '0')}</div>
-            <div style={{ flex: 1 }}>
-              <div>{s.th}</div>
-              <div style={{ fontSize: 10, color: '#8a9b91', fontWeight: 500, marginTop: 1 }}>{s.en}</div>
-            </div>
-          </div>
-        ))}
-      </div>
-      <div className="footer">
-        เปิด <kbd>Tweaks</kbd> เพื่อปรับ ภาษา · โหมดแผนที่ · สถานะการสาธิต
-      </div>
-    </div>
-  );
-
-  return (
-    <>
-      {phoneMount && ReactDOM.createPortal(phoneEl, phoneMount)}
-      {railMount  && ReactDOM.createPortal(railEl, railMount)}
-
-      <TweaksPanel title="Tweaks">
-        <TweakSection label="Flow · มุมมอง">
-          <TweakRadio
-            value={t.mode}
-            onChange={(v) => setT('mode', v)}
-            options={[
-              { value: 'resident', label: 'Resident' },
-              { value: 'driver', label: 'Driver' },
-            ]}
-          />
-        </TweakSection>
-
-        <TweakSection label="Language · ภาษา">
-          <TweakRadio
-            value={t.lang}
-            onChange={(v) => setT('lang', v)}
-            options={[
-              { value: 'th', label: 'ไทย' },
-              { value: 'en', label: 'EN' },
-              { value: 'both', label: 'TH+EN' },
-            ]}
-          />
-        </TweakSection>
-
-        <TweakSection label="Map style · แผนที่">
-          <TweakRadio
-            value={t.mapStyle}
-            onChange={(v) => setT('mapStyle', v)}
-            options={[
-              { value: 'mapbox', label: 'Mapbox 3D' },
-              { value: 'google', label: 'Streets' },
-            ]}
-          />
-        </TweakSection>
-
-        <TweakSection label="Demo state · สถานะ">
-          <TweakSelect
-            value={t.demoState}
-            onChange={(v) => setT('demoState', v)}
-            options={[
-              { value: 'idle', label: 'Idle (home)' },
-              { value: 'matching', label: 'Matching / new request' },
-              { value: 'en-route', label: 'En route / driving' },
-              { value: 'arrived', label: 'Arrived / pickup' },
-            ]}
-          />
-        </TweakSection>
-      </TweaksPanel>
-    </>
-  );
-}
-
-const appRoot = document.createElement('div');
-document.body.appendChild(appRoot);
-ReactDOM.createRoot(appRoot).render(<App />);
-</script>
 </body>
 </html>

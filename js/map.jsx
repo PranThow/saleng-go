@@ -1,7 +1,7 @@
 // map.jsx — Mapbox map component with style toggle (Mapbox standard vs Google-like streets)
 // Props: center, zoom, pitch, bearing, markers, route, fitBounds, mapStyle, interactive
 
-const MAPBOX_TOKEN = 'YOUR_MAPBOX_TOKEN_HERE';
+const MAPBOX_TOKEN = (window.APP_CONFIG && window.APP_CONFIG.mapboxToken) || '';
 
 // "mapbox" mode shows off the gorgeous 3D Standard style.
 // "google" mode uses streets-v12 — simpler, more familiar to people who haven't used Mapbox.
