@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="theme-color" content="#0d3b2e" />
+  <meta name="description" content="ซาเลงโก — บริการรับขยะอัจฉริยะ · Smart waste collection, Bangkok" />
+  <title>Saleng Go · ซาเลงโก</title>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+Thai:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+
+  <!-- Mapbox GL CSS -->
+  <link href="https://api.mapbox.com/mapbox-gl-js/v3.6.0/mapbox-gl.css" rel="stylesheet">
+
+  <!-- App styles -->
+  <link rel="stylesheet" href="css/app.css">
+</head>
+<body>
+
+<div id="app-root"></div>
+
+<!-- React + Babel (standalone — no build step needed) -->
+<script src="https://unpkg.com/react@18.3.1/umd/react.production.min.js" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.production.min.js" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" crossorigin="anonymous"></script>
+
+<!-- API config — MUST load before map.jsx (gitignored; injected by GitHub Actions in CI) -->
+<script src="js/config.js"></script>
+
+<!-- Core design system & utilities -->
+<script type="text/babel" src="js/design.jsx"></script>
+<script type="text/babel" src="js/icons.jsx"></script>
+
+<!-- Map (reads window.APP_CONFIG.mapboxToken) -->
+<script type="text/babel" src="js/map.jsx"></script>
+
+<!-- iOS frame components (used internally by screens) -->
+<script type="text/babel" src="js/ios-frame.jsx"></script>
+
+<!-- Screen components -->
+<script type="text/babel" src="js/resident.jsx"></script>
+<script type="text/babel" src="js/driver.jsx"></script>
+
+<!-- Auth + Settings screens -->
+<script type="text/babel" src="js/auth.jsx"></script>
+<script type="text/babel" src="js/settings.jsx"></script>
+
+<!-- Main app shell — mounts into #app-root -->
+<script type="text/babel" src="js/app.jsx"></script>
+
+</body>
+</html>
